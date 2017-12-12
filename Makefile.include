@@ -1,7 +1,6 @@
 # Globally set default goal to `all`
 .DEFAULT_GOAL := all
 
-# include Makefile.local if it exists
 -include Makefile.local
 
 # set undefined variables
@@ -35,6 +34,9 @@ __DIRECTORY_VARIABLES := \
   PKGDIRBASE \
   DLCACHE_DIR \
   #
+
+# to extend size information print out
+SIZEFLAGS      ?=
 
 # Make all paths absolute.
 override RIOTBASE       := $(abspath $(RIOTBASE))
@@ -335,7 +337,7 @@ ifeq ($(BUILDOSXNATIVE),1)
 else
 	$(Q)$(_LINK) -o $(ELFFILE)
 endif
-	$(Q)$(SIZE) $(ELFFILE)
+	$(Q)$(SIZE) $(SIZEFLAGS) $(ELFFILE)
 	$(Q)$(OBJCOPY) $(OFLAGS) $(ELFFILE) $(HEXFILE)
 endif
 endif # BUILD_IN_DOCKER

@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2015 Kaspar Schleiser <kaspar@schleiser.de>
  *               2014 Freie Universität Berlin, Hinnerk van Bruinehsen
- *               2018 RWTH Aachen, Josua Arndt <jarndt@ias.rwth-aachen.de>
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -23,24 +22,26 @@
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
  * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
- * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
- *
  */
 
-#ifndef CPU_H
-#define CPU_H
+#ifndef ATMEGA_COMMON_H
+#define ATMEGA_COMMON_H
+
+#include "cpu_conf.h"
 
 #include <stdio.h>
 #include <stdint.h>
-
 #include <avr/interrupt.h>
-#include "cpu_conf.h"
 
 /**
  * For downwards compatibility with old RIOT code.
  * TODO: remove once core was adjusted
  */
 #include "irq.h"
+
+#define F_CPU   (32000000UL)
+#define __DELAY_BACKWARD_COMPATIBLE__
+#include <util/delay.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -83,28 +84,29 @@ static inline void cpu_print_last_instruction(void)
     uint8_t lo;
     uint16_t ptr;
 
-    __asm__ volatile( "in __tmp_reg__, __SP_H__; \n\t"
-                      "mov %0, __tmp_reg__       \n\t"
+    __asm__ volatile( "in r0, __SP_H__; \n\t"
+                      "mov %0, r0       \n\t"
                              : "=g"(hi)
                              :
-                             : "__tmp_reg__");
-    __asm__ volatile( "in __tmp_reg__, __SP_L__; \n\t"
-                      "mov %0, __tmp_reg__       \n\t"
+                             : "r0");
+    __asm__ volatile( "in r0, __SP_L__; \n\t"
+                      "mov %0, r0       \n\t"
                              : "=g"(lo)
                              :
-                             : "__tmp_reg__");
+                             : "r0");
     ptr = hi<<8 | lo;
     printf("Stack Pointer: 0x%04x\n", ptr);
 }
 
 /**
- * @brief   Initializes avrlibc stdio
+ * @brief Reboot the CPU
  */
-void atmega_stdio_init(void);
+void reboot(void);
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* CPU_H */
+#endif /* ATMEGA_COMMON_H */
 /** @} */

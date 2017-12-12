@@ -1,0 +1,41 @@
+# Target architecture for the build. Use avr if you are unsure.
+export TARGET_ARCH ?= avr
+
+export CFLAGS_CPU  = -mmcu=$(CPU) $(CFLAGS_FPU) 
+export CFLAGS_LINK = -ffunction-sections -fdata-sections -fno-builtin -fshort-enums
+export CFLAGS_DBG  ?= -ggdb -g3
+export CFLAGS_OPT  ?= -Os
+
+#export CFLAGS += -mrelax -Wl,--relax -Wl,-V 
+export CFLAGS += $(CFLAGS_CPU) $(CFLAGS_LINK) $(CFLAGS_DBG) $(CFLAGS_OPT)
+export ASFLAGS += $(CFLAGS_CPU) $(CFLAGS_DBG)
+#export LINKFLAGS += -Wl,-t -mrelax -Wl,--relax -Wl,-relax
+export LINKFLAGS += $(CFLAGS_CPU) $(CFLAGS_DBG) $(CFLAGS_OPT) -Wl,-u,vfprintf -lprintf_flt -lm -static -lgcc -e reset_handler -Wl,--gc-sections
+
+
+#export CFLAGS += -mrelax -Wl,--relax -Wl,-V $(CFLAGS_CPU)$(CFLAGS_OPT) 
+#export LINKFLAGS += -Wl,-t -mrelax -Wl,--relax -Wl,-relax $(CFLAGS_CPU) $(CFLAGS_DBG) $(CFLAGS_OPT) -Wl,-u,vfprintf -lprintf_flt -lm -static -lgcc -e reset_handler -Wl,--gc-sections
+
+# export the peripheral drivers to be linked into the final binary
+export USEMODULE += atxmega_common_periph
+export USEMODULE += periph_common
+
+# the atmel port uses uart_stdio
+export USEMODULE += uart_stdio
+
+#export INCLUDES += -I $(RIOTBASE)/drivers/include/periph
+#export INCLUDES += -I $(RIOTCPU)/atxmega_common/avr-libc-extra
+#export INCLUDES += -I /usr/avr/include
+
+# include module specific includes
+export INCLUDES += -I $(RIOTCPU)/atxmega_common/include
+export INCLUDES += -I $(RIOTCPU)/atxmega_common/avr-libc-extra
+export INCLUDES += -I /usr/avr/include
+
+ifeq ($(LTO),1)
+  # avr-gcc <4.8.3 has a bug when using LTO which causes a warning to be printed always:
+  # '_vector_25' appears to be a misspelled signal handler [enabled by default]
+  # See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=59396
+  export LINKFLAGS += -Wno-error
+endif
+

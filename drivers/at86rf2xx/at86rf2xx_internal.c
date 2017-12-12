@@ -86,6 +86,32 @@ void at86rf2xx_fb_start(const at86rf2xx_t *dev)
 
     getbus(dev);
     spi_transfer_byte(SPIDEV, CSPIN, true, reg);
+
+/* there are packets which are not acknowledged
+ * change to static frame buffer protection
+ * */
+
+//    /* Josua */
+//    uint8_t reg[2];
+//    uint8_t value[2];
+//
+//    reg[0] = (AT86RF2XX_ACCESS_REG | AT86RF2XX_ACCESS_READ | AT86RF2XX_REG__RX_SYN);
+//    reg[1] = 0;
+//
+//    getbus(dev);
+//
+//    /* read RX_SYN register */
+//    spi_transfer_bytes(SPIDEV, CSPIN, false, &reg, &value, 2);
+//
+//    /* Set Static  frame buffer Protection*/
+//    reg[0] = (AT86RF2XX_ACCESS_REG |AT86RF2XX_ACCESS_WRITE | AT86RF2XX_REG__RX_SYN);
+//    reg[0] = value[1] | 0x80;
+//
+//    spi_transfer_bytes(SPIDEV, CSPIN, false, &reg, NULL, 2);
+//
+//    /* Set pointer to read Frame buffer to begin */
+//    reg[0] = AT86RF2XX_ACCESS_FB | AT86RF2XX_ACCESS_READ;
+//    spi_transfer_byte(SPIDEV, CSPIN, true, reg[0]);
 }
 
 void at86rf2xx_fb_read(const at86rf2xx_t *dev,

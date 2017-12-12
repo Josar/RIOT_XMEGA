@@ -36,12 +36,33 @@
 #include "ps.h"
 #endif
 
+#include "xtimer.h"
+
 const char assert_crash_message[] = "FAILED ASSERTION.";
 
 /* flag preventing "recursive crash printing loop" */
 static int crashed = 0;
 
 void __attribute__((weak)) panic_arch(void) {}
+
+void print_uint64( uint64_t value ){
+
+    char temp_arr[21];
+    uint8_t i =19;
+    uint8_t j=0;
+
+    temp_arr[20]= '\0';
+
+    while (value >0 ){
+        temp_arr[i--] = '0' + value%10 ;
+        value /= 10;
+    }
+    while( i<=19){
+        temp_arr[j++] = (char )temp_arr[++i];
+    }
+    //LOG_ERROR("%s us\n", (temp_arr+19-i) );
+    LOG_ERROR("%s us\n", temp_arr );
+}
 
 /* WARNING: this function NEVER returns! */
 NORETURN void core_panic(core_panic_t crash_code, const char *message)
@@ -58,7 +79,8 @@ NORETURN void core_panic(core_panic_t crash_code, const char *message)
             cpu_print_last_instruction();
         }
 #endif
-        LOG_ERROR("*** RIOT kernel panic:\n%s\n\n", message);
+        LOG_ERROR("*** RIOT kernel panic:\n%s\n", message);
+        LOG_ERROR("*** Runtime: "); print_uint64(xtimer_now_usec64());
 #ifdef DEVELHELP
 #ifdef MODULE_PS
         ps();

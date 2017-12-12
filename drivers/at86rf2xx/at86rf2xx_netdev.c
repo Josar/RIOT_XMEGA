@@ -90,6 +90,14 @@ static int _init(netdev_t *netdev)
         return -1;
     }
 
+#if ENABLE_DEBUG
+    uint16_t partnum = at86rf2xx_reg_read(dev, AT86RF2XX_REG__PART_NUM);
+    uint16_t version = at86rf2xx_reg_read(dev, AT86RF2XX_REG__VERSION_NUM);
+    uint16_t man_id0 = at86rf2xx_reg_read(dev, AT86RF2XX_REG__MAN_ID_0);
+    uint16_t man_id1 = at86rf2xx_reg_read(dev, AT86RF2XX_REG__MAN_ID_1);
+    DEBUG("[at86rf2xx] Part Number:%02x, version:%02x, Atmel JEDEC manufacturer ID:00 00 %02x %02x\n",partnum ,version, man_id1, man_id0);
+#endif
+
 #ifdef MODULE_NETSTATS_L2
     memset(&netdev->stats, 0, sizeof(netstats_t));
 #endif
@@ -145,12 +153,12 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
 
     /* just return length when buf == NULL */
     if (buf == NULL) {
-        at86rf2xx_fb_stop(dev);
+        at86rf2xx_fb_stop(dev); /* this removed frame buffer protection */
         return pkt_len;
     }
     /* not enough space in buf */
     if (pkt_len > len) {
-        at86rf2xx_fb_stop(dev);
+        at86rf2xx_fb_stop(dev); /* this removed frame buffer protection */
         return -ENOBUFS;
     }
     #ifdef MODULE_NETSTATS_L2
@@ -180,8 +188,32 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
         radio_info->rssi = RSSI_BASE_VAL + rssi;
     }
     else {
-        at86rf2xx_fb_stop(dev);
+        at86rf2xx_fb_stop(dev); /* this removed frame buffer protection */
     }
+
+    /* Josua */
+    /* there are packets which are not acknowledged
+     * changed to static frame buffer protection
+     * Now free the static protection
+     * */
+//    uint8_t reg[2];
+//    uint8_t value[2];
+//
+//    reg[0] = (AT86RF2XX_ACCESS_REG | AT86RF2XX_ACCESS_READ | AT86RF2XX_REG__RX_SYN);
+//    reg[1] = 0;
+//
+//    spi_acquire(dev->params.spi, dev->params.cs_pin, SPI_MODE_0, dev->params.spi_clk);
+//
+//    /* read RX_SYN register */
+//    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, &value, 2);
+//
+//    /* Set Static  frame buffer Protection*/
+//    reg[0] =  (AT86RF2XX_ACCESS_REG |AT86RF2XX_ACCESS_WRITE | AT86RF2XX_REG__RX_SYN);
+//    reg[0] = value[1] & ~0x80;
+//
+//    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, NULL, 2);
+//
+//    spi_release(dev->params.spi);
 
     return pkt_len;
 }
@@ -618,10 +650,12 @@ static void _isr(netdev_t *netdev)
                  || (state == AT86RF2XX_STATE_BUSY_TX_ARET)) {
             /* check for more pending TX calls and return to idle state if
              * there are none */
+
             assert(dev->pending_tx != 0);
             if ((--dev->pending_tx) == 0) {
                 at86rf2xx_set_state(dev, dev->idle_state);
                 DEBUG("[at86rf2xx] return to idle state 0x%x\n", dev->idle_state);
+
             }
 /* Only radios with the XAH_CTRL_2 register support frame retry reporting */
 #if AT86RF2XX_HAVE_RETRIES
