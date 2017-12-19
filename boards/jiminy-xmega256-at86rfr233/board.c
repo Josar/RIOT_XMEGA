@@ -78,7 +78,7 @@ void clk_init(void)
         /* Disable CCP for Protected IO register and set new value*/
         /* Set system clock prescalers to zero */
         /* PSCTRL contains A Prescaler Value and one value for and B and C Prescaler */
-         PROTECTED_WRITE(CLK.PSCTRL, CLK_PSADIV_1_gc|CLK_PSBCDIV_1_1_gc);
+         _PROTECTED_WRITE(CLK.PSCTRL, CLK_PSADIV_1_gc|CLK_PSBCDIV_1_1_gc);
          /*
             * Previous instruction takes 3 clk cycles with -Os option
             * we need another clk cycle before we can reuse it.
@@ -87,7 +87,7 @@ void clk_init(void)
 
          /* Disable CCP for Protected IO register and set new value*/
          /* Switch to 32MHz clock */
-         PROTECTED_WRITE(CLK.CTRL, CLK_SCLKSEL_RC32M_gc);
+         _PROTECTED_WRITE(CLK.CTRL, CLK_SCLKSEL_RC32M_gc);
 
         // OSC.CTRL &= ~OSC_RC2MEN_bm;                   /* Disable 2Mhz oscillator */
 

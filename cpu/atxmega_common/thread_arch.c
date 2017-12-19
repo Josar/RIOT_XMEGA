@@ -147,18 +147,18 @@ char *thread_stack_init(thread_task_func_t task_func, void *arg,
 	stk--;
 	*stk = (uint8_t) 0x00;
 #endif
-//#if defined(RAMPY)
-//    stk--;
-//    *stk = (uint8_t) 0x00;
-//#endif
-//#if defined(RAMPX)
-//    stk--;
-//    *stk = (uint8_t) 0x00;
-//#endif
-//#if defined(RAMPD)
-//    stk--;
-//    *stk = (uint8_t) 0x00;
-//#endif
+#if defined(RAMPY)
+    stk--;
+    *stk = (uint8_t) 0x00;
+#endif
+#if defined(RAMPX)
+    stk--;
+    *stk = (uint8_t) 0x00;
+#endif
+#if defined(RAMPD)
+    stk--;
+    *stk = (uint8_t) 0x00;
+#endif
 
 	/* r1 - has always to be 0 */
 	stk--;
@@ -296,18 +296,18 @@ __attribute__((always_inline)) static inline void __context_save(void) {
 			"in   r0, __SREG__                   \n\t"
 			"cli                                 \n\t"
 			"push r0                             \n\t"
-//#if defined(RAMPD)
-//        "in     r0, 0x08               \n\t"
-//        "push   r0                           \n\t"
-//#endif
-//#if defined(RAMPX)
-//        "in     r0, 0x09                \n\t"
-//        "push   r0                           \n\t"
-//#endif
-//#if defined(RAMPY)
-//        "in     r0, 0x0A                \n\t"
-//        "push   r0                           \n\t"
-//#endif
+#if defined(RAMPD)
+        "in     r0, 0x08               \n\t"
+        "push   r0                           \n\t"
+#endif
+#if defined(RAMPX)
+        "in     r0, 0x09                \n\t"
+        "push   r0                           \n\t"
+#endif
+#if defined(RAMPY)
+        "in     r0, 0x0A                \n\t"
+        "push   r0                           \n\t"
+#endif
 #if defined(RAMPZ)
 			"in     r0, 0x0B                \n\t"
 			"push   r0                           \n\t"
@@ -415,18 +415,18 @@ __attribute__((always_inline)) static inline void __context_restore(void) {
 			"pop    r0                           \n\t"
 			"out    0x0B, r0                     \n\t"
 #endif
-//#if defined(RAMPY)
-//        "pop    r0                           \n\t"
-//        "out    0x0A, r0                \n\t"
-//#endif
-//#if defined(RAMPX)
-//        "pop    r0                           \n\t"
-//        "out    0x09, r0                \n\t"
-//#endif
-//#if defined(RAMPD)
-//        "pop    r0                           \n\t"
-//        "out    0x08, r0                \n\t"
-//#endif
+#if defined(RAMPY)
+        "pop    r0                           \n\t"
+        "out    0x0A, r0                \n\t"
+#endif
+#if defined(RAMPX)
+        "pop    r0                           \n\t"
+        "out    0x09, r0                \n\t"
+#endif
+#if defined(RAMPD)
+        "pop    r0                           \n\t"
+        "out    0x08, r0                \n\t"
+#endif
 			"pop  r0                             \n\t"
 			"out  __SREG__, r0                   \n\t"
 			"pop  r0                             \n\t"

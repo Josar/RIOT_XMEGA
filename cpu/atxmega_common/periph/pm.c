@@ -29,6 +29,8 @@
 #include "xtimer.h"
 #include <stdio.h>
 
+#include "thread.h"
+
 void pm_off(void)
 {
 	// TODO
@@ -37,13 +39,15 @@ void pm_off(void)
 
 void pm_reboot(void)
 {
+    printf("pm_reboot\n");
 	reboot();
 }
 
 void pm_set_lowest(void) {
 
-//	thread_arch_stack_print();
-//	printf("\npm_set_lowest\n");
+//    printf("\npm_set_lowest\n");
+//    thread_stack_print();
+
 
 //	PORTF.OUTCLR = PIN3_bm ;
 //	PORTF.OUTCLR = PIN2_bm ;

@@ -28,7 +28,7 @@
 #endif
 
 #include "debug.h"
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 0
 
 /**
  * @brief   Starting offset of CPU_ID
@@ -60,13 +60,14 @@ void cpuid_get(void *id)
 #endif
 	};
 
-	printf("CPUID: " );
+#if ENABLE_DEBUG
+	DEBUG("CPUID: " );
 	for(uint8_t i=0; i<CPUID_LEN; i++)
 	{
-	    printf(" %02x ", addr[i] );
+	    DEBUG(" %02x ", addr[i] );
 	}
-	printf("\n" );
-
+	DEBUG("\n" );
+#endif
 
     memcpy( id , addr, CPUID_LEN);
 }

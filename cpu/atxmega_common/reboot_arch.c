@@ -35,6 +35,6 @@ void reboot(void)
      */
 
 	/* Disable CCP for Protected IO registerand set new value*/
-     PROTECTED_WRITE(RST_CTRL, RST_SWRST_bm);
+     _PROTECTED_WRITE(RST_CTRL, RST_SWRST_bm);
     while(1){};
 }
