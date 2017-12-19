@@ -27,6 +27,8 @@
 
 #include "gnrc_sock_internal.h"
 
+#include "stdio.h"
+
 #ifdef MODULE_GNRC_SOCK_CHECK_REUSE
 static sock_udp_t *_udp_socks = NULL;
 #endif
@@ -178,33 +180,55 @@ ssize_t sock_udp_recv(sock_udp_t *sock, void *data, size_t max_len,
     if (sock->local.family == AF_UNSPEC) {
         return -EADDRNOTAVAIL;
     }
+
     tmp.family = sock->local.family;
+
     res = gnrc_sock_recv((gnrc_sock_reg_t *)sock, &pkt, timeout, &tmp);
     if (res < 0) {
         return res;
     }
+
     if (pkt->size > max_len) {
         gnrc_pktbuf_release(pkt);
         return -ENOBUFS;
     }
+
     udp = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_UDP);
     assert(udp);
     hdr = udp->data;
+
     if (remote != NULL) {
         /* return remote to possibly block if wrong remote */
         memcpy(remote, &tmp, sizeof(tmp));
         remote->port = byteorder_ntohs(hdr->src_port);
     }
-    if ((sock->remote.family != AF_UNSPEC) &&  /* check remote end-point if set */
-        ((sock->remote.port != byteorder_ntohs(hdr->src_port)) ||
+
+    // (sock->remote.family != AF_UNSPEC) Unspecified when ENABLE_DEBUG (0) in gcopa.c
+    // memcpy( &(sock->remote) , &tmp, sizeof(tmp));
+
+    if (
+        (sock->remote.family != AF_UNSPEC) &&  /* check remote end-point if set */
+        (
+         (sock->remote.port != byteorder_ntohs(hdr->src_port)) ||
         /* We only have IPv6 for now, so just comparing the whole end point
          * should suffice */
-        ((memcmp(&sock->remote.addr, &ipv6_addr_unspecified,
-                 sizeof(ipv6_addr_t)) != 0) &&
-         (memcmp(&sock->remote.addr, &tmp.addr, sizeof(ipv6_addr_t)) != 0)))) {
+         (
+          (memcmp(&sock->remote.addr, &ipv6_addr_unspecified,sizeof(ipv6_addr_t)) != 0) &&
+          (memcmp(&sock->remote.addr, &tmp.addr, sizeof(ipv6_addr_t)) != 0)
+         )
+        )
+        ) {
+
+        printf("Address Format specified unspecified %u, Format %d\n", sock->remote.family != AF_UNSPEC, sock->remote.family  );
+        printf("Port %u != %u\n",  sock->remote.port, byteorder_ntohs(hdr->src_port));
+        printf("IP good ipv6_addr_unspecified: %d\n", (memcmp(&sock->remote.addr, &ipv6_addr_unspecified,sizeof(ipv6_addr_t)) != 0) );
+        printf("IP good tmp.addr: %d\n", (memcmp(&sock->remote.addr, &tmp.addr, sizeof(ipv6_addr_t)) != 0) );
+
         gnrc_pktbuf_release(pkt);
+        printf("3\n");
         return -EPROTO;
     }
+
     memcpy(data, pkt->data, pkt->size);
     gnrc_pktbuf_release(pkt);
     return (int)pkt->size;

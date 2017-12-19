@@ -26,6 +26,9 @@
 #include "sock_types.h"
 #include "gnrc_sock_internal.h"
 
+#include "stdio.h"
+#include "od.h"
+
 #ifdef MODULE_XTIMER
 #define _TIMEOUT_MAGIC      (0xF38A0B63U)
 #define _TIMEOUT_MSG_TYPE   (0x8474)
@@ -59,6 +62,7 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
     if (reg->mbox.cib.mask != (SOCK_MBOX_SIZE - 1)) {
         return -EINVAL;
     }
+
 #ifdef MODULE_XTIMER
     xtimer_t timeout_timer;
 
@@ -73,6 +77,7 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
     }
     else {
         if (!mbox_try_get(&reg->mbox, &msg)) {
+            printf("gnrc_sock_recv -EAGAIN\n");
             return -EAGAIN;
         }
     }
@@ -93,6 +98,7 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
         default:
             return -EINVAL;
     }
+
     /* TODO: discern NETTYPE from remote->family (set in caller), when IPv4
      * was implemented */
     ipv6_hdr_t *ipv6_hdr;
@@ -100,6 +106,7 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
     assert((ip != NULL) && (ip->size >= 40));
     ipv6_hdr = ip->data;
     memcpy(&remote->addr, &ipv6_hdr->src, sizeof(ipv6_addr_t));
+
     remote->family = AF_INET6;
     netif = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_NETIF);
     if (netif == NULL) {
@@ -111,6 +118,8 @@ ssize_t gnrc_sock_recv(gnrc_sock_reg_t *reg, gnrc_pktsnip_t **pkt_out,
         remote->netif = (uint16_t)netif_hdr->if_pid;
     }
     *pkt_out = pkt; /* set out parameter */
+
+    //od_hex_dump((*pkt_out)->data, (*pkt_out)->size, OD_WIDTH_DEFAULT);
     return 0;
 }
 
