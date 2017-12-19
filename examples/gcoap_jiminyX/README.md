@@ -83,3 +83,9 @@ implementations:
 [1]: https://tools.ietf.org/html/rfc7252    "CoAP spec"
 [2]: https://github.com/RIOT-OS/RIOT/tree/master/examples/gnrc_networking    "instructions"
 [3]: https://github.com/RIOT-OS/RIOT/tree/master/examples/gnrc_border_router    "SLIP instructions"
+
+write stats and read them back
+./coap-client -N -m put -p 5683 coap://[21a5::2028:3cdc:25bb:613e]/cli/stats -e 5
+./coap-client -N -m get -p 5683 coap://[21a5::2028:3cdc:25bb:613e]/cli/stats
+
+
