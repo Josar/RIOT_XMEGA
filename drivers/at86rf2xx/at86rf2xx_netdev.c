@@ -196,24 +196,24 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
      * changed to static frame buffer protection
      * Now free the static protection
      * */
-//    uint8_t reg[2];
-//    uint8_t value[2];
-//
-//    reg[0] = (AT86RF2XX_ACCESS_REG | AT86RF2XX_ACCESS_READ | AT86RF2XX_REG__RX_SYN);
-//    reg[1] = 0;
-//
-//    spi_acquire(dev->params.spi, dev->params.cs_pin, SPI_MODE_0, dev->params.spi_clk);
-//
-//    /* read RX_SYN register */
-//    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, &value, 2);
-//
-//    /* Set Static  frame buffer Protection*/
-//    reg[0] =  (AT86RF2XX_ACCESS_REG |AT86RF2XX_ACCESS_WRITE | AT86RF2XX_REG__RX_SYN);
-//    reg[0] = value[1] & ~0x80;
-//
-//    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, NULL, 2);
-//
-//    spi_release(dev->params.spi);
+    uint8_t reg[2];
+    uint8_t value[2];
+
+    reg[0] = (AT86RF2XX_ACCESS_REG | AT86RF2XX_ACCESS_READ | AT86RF2XX_REG__RX_SYN);
+    reg[1] = 0;
+
+    spi_acquire(dev->params.spi, dev->params.cs_pin, SPI_MODE_0, dev->params.spi_clk);
+
+    /* read RX_SYN register */
+    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, &value, 2);
+
+    /* Set Static  frame buffer Protection*/
+    reg[0] =  (AT86RF2XX_ACCESS_REG |AT86RF2XX_ACCESS_WRITE | AT86RF2XX_REG__RX_SYN);
+    reg[0] = value[1] & ~0x80;
+
+    spi_transfer_bytes(dev->params.spi, dev->params.cs_pin, false, &reg, NULL, 2);
+
+    spi_release(dev->params.spi);
 
     return pkt_len;
 }

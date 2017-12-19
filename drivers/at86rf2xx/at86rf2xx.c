@@ -140,12 +140,23 @@ size_t at86rf2xx_send(at86rf2xx_t *dev, const uint8_t *data, size_t len)
 
 void at86rf2xx_tx_prepare(at86rf2xx_t *dev)
 {
-    uint8_t state;
+    uint8_t state=0;
 
     dev->pending_tx++;
-    state = at86rf2xx_set_state(dev, AT86RF2XX_STATE_TX_ARET_ON);
-    if (state != AT86RF2XX_STATE_TX_ARET_ON) {
-        dev->idle_state = state;
+
+//    state = at86rf2xx_set_state(dev, AT86RF2XX_STATE_TX_ARET_ON);
+//    if (state != AT86RF2XX_STATE_TX_ARET_ON) {
+//        dev->idle_state = state;
+//    }
+
+    while(state != AT86RF2XX_STATE_TX_ARET_ON){
+        state = at86rf2xx_set_state(dev, AT86RF2XX_STATE_TX_ARET_ON);
+        if (state != AT86RF2XX_STATE_TX_ARET_ON) {
+            dev->idle_state = state;
+            DEBUG("at86rf2xx_tx_prepare: error setting state to TX_ARET_ON instead: 0x%02x\n", state);
+        }else{
+            DEBUG("at86rf2xx_tx_prepare: state 0x%02x\n", state);
+        }
     }
     dev->tx_frame_len = IEEE802154_FCS_LEN;
 }
@@ -167,6 +178,12 @@ void at86rf2xx_tx_exec(const at86rf2xx_t *dev)
     /* trigger sending of pre-loaded frame */
     at86rf2xx_reg_write(dev, AT86RF2XX_REG__TRX_STATE,
                         AT86RF2XX_TRX_STATE__TX_START);
+
+//    uint8_t state = at86rf2xx_get_status(dev);
+//    if (state != AT86RF2XX_TRX_STATE__TX_START) {
+//        printf("at86rf2xx_tx_exec: error setting state to TX_START\n");
+//    }
+
     if (netdev->event_callback &&
         (dev->netdev.flags & AT86RF2XX_OPT_TELL_TX_START)) {
         netdev->event_callback(netdev, NETDEV_EVENT_TX_STARTED);
