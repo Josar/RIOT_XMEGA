@@ -21,11 +21,11 @@
 #include "cpu.h"
 #include "periph/init.h"
 
-#include "board.h"
 #include <avr/io.h>
 
 #include "avr/wdt.h"
 #include "avr/pgmspace.h"
+#include "../../boards/jiminy-xmega256-at86rf233/include/board.h"
 
 #define ENABLE_DEBUG (1)
 #include "debug.h"

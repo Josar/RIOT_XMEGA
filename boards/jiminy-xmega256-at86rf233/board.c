@@ -1,3 +1,5 @@
+#include "../jiminy-xmega256-at86rf233/include/board.h"
+
 /*
  * Copyright (C) 2016 RWTH Aachen, Josua Arndt
  * Copyright (C) 2014 Freie Universität Berlin, Hinnerk van Bruinehsen
@@ -22,8 +24,6 @@
  * @}
  */
 #include <avr/cpufunc.h>
-
-#include "board.h"
 
 #include <stdio.h>
 #include <avr/io.h>

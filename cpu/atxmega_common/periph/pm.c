@@ -22,14 +22,13 @@
 #include "irq.h"
 #include "periph/pm.h"
 
-#include "periph_conf.h"
-
 #include "cpu.h"
-#include "board.h"
 #include "xtimer.h"
 #include <stdio.h>
 
 #include "thread.h"
+#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
+#include "../../../boards/jiminy-xmega256-at86rf233/include/periph_conf.h"
 
 void pm_off(void)
 {

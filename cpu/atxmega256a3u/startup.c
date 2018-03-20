@@ -19,11 +19,10 @@
  */
 
 /* For Catchall-Loop */
-#include "board.h"
-
 #include <stdint.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include "../../boards/jiminy-xmega256-at86rf233/include/board.h"
 
 
 /**

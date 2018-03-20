@@ -31,7 +31,7 @@
 #include "cpu.h"
 #include "periph/gpio.h"
 
-#include "periph_conf.h"
+#include "../../../boards/jiminy-xmega256-at86rf233/include/periph_conf.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"

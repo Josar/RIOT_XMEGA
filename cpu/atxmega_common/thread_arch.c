@@ -24,7 +24,8 @@
 #include "sched.h"
 #include "irq.h"
 #include "cpu.h"
-#include "board.h"
+
+#include "../../boards/jiminy-xmega256-at86rf233/include/board.h"
 
 /**
  * @brief AVR_CONTEXT_SWAP_INIT intialize the context swap trigger

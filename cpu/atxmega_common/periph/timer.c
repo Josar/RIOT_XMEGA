@@ -21,12 +21,13 @@
 
 #include <avr/interrupt.h>
 
-#include "board.h"
 #include "cpu.h"
 #include "thread.h"
 
 #include "periph/timer.h"
-#include "periph_conf.h"
+
+#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
+#include "../../../boards/jiminy-xmega256-at86rf233/include/periph_conf.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"

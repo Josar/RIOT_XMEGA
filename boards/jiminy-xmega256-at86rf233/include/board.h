@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016 RWTH Aachen, Josua Arndt
- * Copyright (C) 2014 Freie Universität Berlin, Hinnerk van Bruinehsen
+ * Copyright (C) 2018 RWTH Aachen, Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -8,15 +7,14 @@
  */
 
 /**
- * @defgroup    boards_pinoccio-mega256rfr2 Pinoccio Mega 256rfr2
+ * @defgroup    boards_jiminy_xmega256-at86rf233 Jiminy Xmega256 at86rf233
  * @ingroup     boards
- * @brief       Board specific files for the Pinoccio Mega 256rfr2 board.
+ * @brief       Board specific files for the Jiminy Xmega256 at86rf233.
  * @{
  *
  * @file
- * @brief       Board specific definitions for Pinoccio Mega 256rfr2 board.
+ * @brief       Board specific definitions for Jiminy Xmega256 at86rf233 board.
  *
- * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
  * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  */
 
@@ -24,7 +22,8 @@
 #define BOARD_H_
 
 #include "cpu.h"
-#include "periph_conf.h"
+
+#include "../../jiminy-xmega256-at86rf233/include/periph_conf.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,8 +44,6 @@ extern "C" {
 
 #define UART_STDIO_BAUDRATE (460800)
 #define UART_STDIO_DEV (0)
-
-int16_t xmega_calculate_bsel_bscale(uint32_t fcpu, uint32_t baud, uint8_t* clk2x,  uint16_t* bsel , int8_t* bscale);
 
 /**
  * @brief   LED pin definitions and handlers

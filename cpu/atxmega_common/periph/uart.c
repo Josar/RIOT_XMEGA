@@ -32,14 +32,18 @@
 #include "sched.h"
 #include "thread.h"
 
-#include "board.h"
 #include "periph/uart.h"
-
 
 #include <avr/io.h>
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
+
+#define ENABLE_DEBUG (0)
+#include "debug.h"
+
 /**
  * @brief   Maximum percentage error in calculated baud before switching to
  *          double speed transmission (U2X)
@@ -53,8 +57,8 @@
 #define BAUD_TOL 200
 #endif
 
-
-//xmega_uart_t const UART0 = UART0_CONF;
+int16_t xmega_calculate_bsel_bscale(uint32_t fcpu, uint32_t baud, uint8_t* clk2x,
+                                    uint16_t* bsel , int8_t* bscale);
 
 /**
  * @brief   Configured device map
@@ -112,7 +116,8 @@ int8_t _check_bsel(uint32_t* baud, uint32_t* calcbaud,int16_t* precision ){
 
 }
 
-int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint16_t* bsel , int8_t* bscale ){
+int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,
+                           uint16_t* bsel , int8_t* bscale ){
 
     uint32_t calcbaud =0;
     int16_t precision =UINT_MAX;
@@ -147,7 +152,6 @@ int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint1
 
         deno = ((*baud)<<(4-clk2x+locBscale));
         sub  = ((*fper)<<1) - (deno);
-//        printf("deno % " PRIu32 "\t sub %" PRIu32 "\n", deno, sub);
 
         if(sub <=0){
             break;
@@ -159,13 +163,6 @@ int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint1
             continue;
         }
 
-//        deno = ((locBsel+1)<<(4-clk2x));
-//        printf("deno % " PRIu32 " \n", deno );
-//
-//        deno = ((*fper)>>locBscale);
-//        printf("fper % " PRIu32 " \n", deno );
-
-
         /* Omit division by 16 get higher accuracy at small baudrates*/
         calcbaud = ((*fper)>>locBscale)/( (locBsel+1)<<(4-clk2x) );
 
@@ -173,13 +170,11 @@ int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint1
             *bsel = locBsel;
             *bscale = locBscale;
         }
-//        printf("Bsel % " PRIu16 " \t  baud %" PRIu32 "\t precision% i \n", locBsel, calcbaud, precision);
-
     }
 
     /* More math for the negative equation
-     * bscale is negative so 1/2^bscale = 2^|bscale| which is a factor and not a division
-     * again runding the result before division with 0.5*denominator
+     * bscale is negative so 1/2^bscale = 2^|bscale| which is a factor and not a
+     * division again runding the result before division with 0.5*denominator
      *
      * bsel = 1/2^bscale *( fcpu / ( (16*baud)-1) )
      *      = (  fcpu*2^|bscale| - (16*baud)*2^|bscale| )/(16*baud)
@@ -210,7 +205,6 @@ int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint1
             *bsel = locBsel;
             *bscale = locBscale;
         }
-//        DEBUG("Bsel % " PRIu16 " \t  baud %" PRIu32 "\t precision% i \n", locBsel, calcbaud, precision);
     }
 
     return precision;
@@ -218,13 +212,15 @@ int16_t _xmega_bsel_bscale(uint32_t* fper, uint32_t* baud, uint8_t clk2x,  uint1
 
 /**
  * @brief   Calculates bsel and bscale for a given periphery clock and baudrate.
- *          Limitation are the periphery clock maximum is 32MHz, unsigned int overflow if bigger.
- *          And the periphery clock has to be not smaller then 1 when divided by 128.
+ *          Limitation are the periphery clock maximum is 32MHz, unsigned int
+ *          overflow if bigger. And the periphery clock has to be not smaller
+ *          then 1 when divided by 128.
  *
- * fper/128 !=0 teilbat sein
+ * fper/128 !=0 must be devide able by 128
  * fper*128 != uint23_max => 32MHz max fper
  */
-int16_t xmega_calculate_bsel_bscale(uint32_t fcpu, uint32_t baud, uint8_t* clk2x,  uint16_t* bsel , int8_t* bscale){
+int16_t xmega_calculate_bsel_bscale(uint32_t fcpu, uint32_t baud, uint8_t* clk2x,
+                                    uint16_t* bsel , int8_t* bscale){
 
     int16_t precision =0;
 
@@ -246,8 +242,6 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg)
     int8_t  bscale;
     uint8_t clk2x;
     uint16_t bsel;
-//    uint16_t precision;
-
 
     /* make sure the given device is valid */
     if (uart >= UART_NUMOF) {
@@ -265,22 +259,15 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg)
 
     /* configure UART to 8N1 mode */
     dev[uart]->CTRLC = USART_CMODE_ASYNCHRONOUS_gc|USART_PMODE_DISABLED_gc| USART_CHSIZE_8BIT_gc ;
-    /* set clock divider */
 
-//    precision =
-            xmega_calculate_bsel_bscale(CLOCK_CORECLOCK, baudrate, &clk2x, &bsel, &bscale);
+    /* set clock divider */
+    xmega_calculate_bsel_bscale(CLOCK_CORECLOCK, baudrate, &clk2x, &bsel, &bscale);
 
     dev[uart]->BAUDCTRLA = (uint8_t)(bsel&0x00ff);
     dev[uart]->BAUDCTRLB = (bscale<<USART_BSCALE_gp) | ((uint8_t)((bsel&0x0fff)>>8));
     if(clk2x==1){
        dev[uart]->CTRLB |= USART_CLK2X_bm;
     }
-
-//     // set uasart to 115 200BAUD
-//     dev[uart]->BAUDCTRLA = ( 2158 & 0xff)<< USART_BSEL_gp;
-//     dev[uart]->BAUDCTRLB = ((-7) << USART_BSCALE_gp) | ( ( 2158 >> 8) << USART_BSEL_gp );
-
-
 
      /* enable RX and TX Interrupts and set level*/
     if (rx_cb) {
@@ -299,8 +286,7 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg)
     sei();
 
     _delay_ms(100);
-
-//    DEBUG("Set clk2x %" PRIu8 " bsel %" PRIu16 "bscale %" PRIi8 " precision of % i \n", clk2x, bsel, bscale, precision);
+    DEBUG("Set clk2x %" PRIu8 " bsel %" PRIu16 "bscale %" PRIi8 "\n", clk2x, bsel, bscale);
     return UART_OK;
 }
 
@@ -327,37 +313,35 @@ static inline void isr_handler(int num)
     }
 }
 
-// #ifdef USARTC1_RXC_vect
-
-ISR(USARTC1_RXC_vect, ISR_BLOCK)
+#ifdef UART_0_RXC_ISR
+ISR(UART_0_RXC_ISR, ISR_BLOCK)
 {
     __enter_isr();
-    // PORTE.OUTTGL = PIN6_bm ;
     isr_handler(0);
     __exit_isr();
 }
-// #endif /* UART_0_RXC_ISR */
+#endif /* UART_0_RXC_ISR */
 
-#ifdef UART_1_ISR
-ISR(UART_1_ISR, ISR_BLOCK)
+#ifdef UART_1_RXC_ISR
+ISR(UART_1_RXC_ISR, ISR_BLOCK)
 {
     __enter_isr();
     isr_handler(1);
     __exit_isr();
 }
-#endif /* UART_1_ISR */
+#endif /* UART_1_RXC_ISR */
 
-#ifdef UART_2_ISR
-ISR(UART_2_ISR, ISR_BLOCK)
+#ifdef UART_2_RXC_ISR
+ISR(UART_0_RXC_ISR, ISR_BLOCK)
 {
     __enter_isr();
     isr_handler(2);
     __exit_isr();
 }
-#endif /* UART_2_ISR */
+#endif /* UART_2_RXC_ISR */
 
-#ifdef UART_3_ISR
-ISR(UART_3_ISR, ISR_BLOCK)
+#ifdef UART_3_RXC_ISR
+ISR(UART_3_RXC_ISR, ISR_BLOCK)
 {
     __enter_isr();
     isr_handler(3);
