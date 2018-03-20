@@ -27,8 +27,9 @@
 	#include "at86rf2xx_registers.h"
 #endif
 
-#include "debug.h"
 #define ENABLE_DEBUG 0
+#include "debug.h"
+
 
 /**
  * @brief   Starting offset of CPU_ID
