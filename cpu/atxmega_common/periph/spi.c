@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2015 Daniel Amkaer Sorensen
- *               2016 Freie Universität Berlin
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -14,8 +13,7 @@
  * @file
  * @brief       Low-level SPI driver implementation for ATmega family
  *
- * @author      Daniel Amkaer Sorensen <daniel.amkaer@gmail.com>
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
+ * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  *
  * @}
  */
@@ -47,15 +45,10 @@ static inline SPI_t* bus_base(spi_t bus)
 {
     return ((SPI_t*) (SPI_PORT_BASE +(SPI_BUS_OFFSET*bus)));
 }
-// bus number from base address
-//(((SPI_t*)bus) - SPI_BASE_PORT)/SPI_PORT_OFFSET;
-//uint8_t bus_num = _pin_num(bus);
-
 
 /* TODO find general way to configer power register */
 void spi_init(spi_t bus)
 {
-
     /* power off the SPI peripheral */
     PR.PRPD |= PR_SPI_bm;
 
@@ -64,12 +57,10 @@ void spi_init(spi_t bus)
    spi_init_pins(bus);
 }
 
-
 void spi_init_pins(spi_t bus)
 {
 
 //    SPI_t* spi = bus_base(bus);
-
 
     (void)bus;
     /* the pin configuration for this CPU is for now :

@@ -1,9 +1,5 @@
-#include "../jiminy-xmega256-at86rf233/include/board.h"
-
 /*
- * Copyright (C) 2016 RWTH Aachen, Josua Arndt
- * Copyright (C) 2014 Freie Universität Berlin, Hinnerk van Bruinehsen
- *               2015 Kaspar Schleiser <kaspar@schleiser.de>
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -11,17 +7,14 @@
  */
 
 /**
- * @ingroup     boards_pinoccio-mega256rfr2
+ * @ingroup     boards_jiminy-xmega256a3u-at86rf233
  * @{
  *
  * @file
- * @brief       Board specific implementations for the Pinoccio Mega 256rfr2 board
+ * @brief       Peripheral MCU configuration for the
+ *              Jiminy Xmega256a3u at86rfr233 board
  *
- * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
- * @author      Kaspar Schleiser <kaspar@schleiser.de>
  * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
- *
- * @}
  */
 #include <avr/cpufunc.h>
 
@@ -31,6 +24,7 @@
 #include "cpu.h"
 #include "uart_stdio.h"
 
+#include "board.h"
 #include "periph/init.h"
 
 void system_stdio_init(void);

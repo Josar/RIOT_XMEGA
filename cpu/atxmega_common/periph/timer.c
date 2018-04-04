@@ -11,7 +11,7 @@
  * @{
  *
  * @file
- * @brief       Low-level timer driver implementation for the ATmega family
+ * @brief       Low-level timer driver implementation for the ATxmega family
  *
  * @author      Jousa Arndt <jarndt@ias.rwth-aachen.de>
  *
@@ -25,12 +25,11 @@
 
 #include "periph/timer.h"
 
-#include "include/board.h"
-#include "include/periph_conf.h"
+#include "board.h"
+#include "periph_conf.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
-
 
 /**
  * @brief   All timers have three channels
@@ -57,10 +56,6 @@ typedef struct {
     uint8_t mode;           /**< remember the configured mode */
     uint8_t isrs;           /**< remember the interrupt state */
 } ctx_t;
-
-
-// #define TIMER_0_MASK        &TIMSK1
-// #define TIMER_0_FLAG        &TIFR1
 
 /**
  * @brief   Allocate memory for saving the device states
@@ -113,8 +108,8 @@ int timer_init(tim_t tim, unsigned long freq, timer_cb_t cb, void *arg)
     }
 
     /* stop and reset timer */
-    ctx[tim].dev->CTRLA = 0;                    // Stop
-    ctx[tim].dev->CTRLFSET = TC_CMD_RESET_gc;   // Force Reset
+    ctx[tim].dev->CTRLA = 0;                    /* Stop */
+    ctx[tim].dev->CTRLFSET = TC_CMD_RESET_gc;   /* Force Reset */
 
     /* save interrupt context and timer Prescaler */
     ctx[tim].cb = cb;
@@ -173,9 +168,9 @@ int timer_clear(tim_t tim, int channel)
     // Compare or Capture Disable
     ctx[tim].dev->CTRLB &= ~(1 << (channel + TC0_CCAEN_bp));
 
-    // Clear Interrupt Flag
-    // ctx[tim].dev->INTFLAGS &= ~(1 << (channel + TC0_CCAIF_bp));
-    //The CCxIF is automatically cleared when the corresponding interrupt vector is executed.
+    /* Clear Interrupt Flag
+     * The CCxIF is automatically cleared when the corresponding
+     * interrupt vector is executed.*/
 
     return 0;
 }
@@ -205,13 +200,13 @@ static inline void _isr(tim_t tim, int channel)
 
     DEBUG("timer _isr channel %d\n", channel);
 
-    // Compare or Capture Disable
+    /* Compare or Capture Disable */
     ctx[tim].dev->CTRLB &= ~(1 << (channel + TC0_CCAEN_bp));
 
+    /* Execute callback */
     ctx[tim].cb(ctx[tim].arg, channel);
 
-    //PORTE.OUTTGL = PIN7_bm ;
-
+    /* Initiate context switch if necessary */
     if (sched_context_switch_request) {
         thread_yield();
     }

@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2015 HAW Hamburg
- *               2016 Freie Universität Berlin
- *               2016 INRIA
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -15,9 +13,7 @@
  * @file
  * @brief           CPU specific definitions for internal peripheral handling
  *
- * @author          René Herthel <rene-herthel@outlook.de>
- * @author          Hauke Petersen <hauke.petersen@fu-berlin.de>
- * @author          Francisco Acosta <francisco.acosta@inria.fr>
+ * @author          Josua Arndt <jarndt@ias.rwth-aachen.de>
  */
 
 #ifndef PERIPH_CPU_COMMON_H

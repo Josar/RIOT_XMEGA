@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2016 RWTH Aachen, Josua Arndt
- * Copyright (C) 2014-2016 Freie Universität Berlin
- *               2014 Hinnerk van Bruinehsen
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -9,17 +7,15 @@
  */
 
 /**
- * @ingroup     boards_pinoccio-mega256rfr2
+ * @ingroup     boards_jiminy-xmega256a3u-at86rf233
  * @{
  *
  * @file
- * @brief       Peripheral MCU configuration for the Pinoccio Mega 256rfr2 board
+ * @brief       Peripheral MCU configuration for the
+ *              Jiminy Xmega256a3u at86rfr233 board
  *
- * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
  * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  */
-
 #include "mutex.h"
 
 #ifndef PERIPH_CONF_H_

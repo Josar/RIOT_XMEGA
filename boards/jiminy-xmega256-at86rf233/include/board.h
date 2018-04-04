@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 RWTH Aachen, Josua Arndt
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -7,13 +7,14 @@
  */
 
 /**
- * @defgroup    boards_jiminy_xmega256-at86rf233 Jiminy Xmega256 at86rf233
+ * @defgroup    boards_jiminy-xmega256a3u-at86rf233 Jiminy Xmega256a3u at86rf233
  * @ingroup     boards
- * @brief       Board specific files for the Jiminy Xmega256 at86rf233.
+ * @brief       Board specific files for the Jiminy Xmega256a3u at86rfr233 board.
  * @{
  *
  * @file
- * @brief       Board specific definitions for Jiminy Xmega256 at86rf233 board.
+ * @brief       Board specific definitions for
+ *              Jiminy atmega256a3u at86rfr233 board.
  *
  * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  */
@@ -23,7 +24,7 @@
 
 #include "cpu.h"
 
-#include "../../jiminy-xmega256-at86rf233/include/periph_conf.h"
+#include "periph_conf.h"
 
 #ifdef __cplusplus
 extern "C" {

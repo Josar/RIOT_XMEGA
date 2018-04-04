@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2016 Kaspar Schleiser <kaspar@schleiser.de>
- *               2014 Freie Universität Berlin, Hinnerk van Bruinehsen
+ * Copyright (C) 2018 Josau Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -14,8 +13,7 @@
  * @file
  * @brief       Implementation of common AVR periph/pm functions
  *
- * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
- * @author      Kaspar Schleiser <kaspar@schleiser.de>
+ * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  *
  * @}
  */
@@ -27,8 +25,8 @@
 #include <stdio.h>
 
 #include "thread.h"
-#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
-#include "../../../boards/jiminy-xmega256-at86rf233/include/periph_conf.h"
+#include "board.h"
+#include "periph_conf.h"
 
 void pm_off(void)
 {

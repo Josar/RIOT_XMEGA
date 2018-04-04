@@ -7,12 +7,12 @@
  */
 
 /**
- * @ingroup     cpu_atmega_common
+ * @ingroup     cpu_atxmega_common
  * @ingroup     drivers_periph_gpio
  * @{
  *
  * @file
- * @brief       Low-level GPIO driver implementation for ATmega family
+ * @brief       Low-level GPIO driver implementation for ATxmega family
  *
  * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
  *
@@ -113,7 +113,7 @@ static inline uint16_t _port_addr(gpio_t pin)
     port_addr += port_num * GPIO_PORT_OFFSET;
 
     /* PORT_Q and PORT_R have an offset, PORT_K = 8 last port with no offset */
-#if define(PORT_Q) || define(PORT_R)
+#if defined(PORT_Q) || defined(PORT_R)
     if (port_num > 8) {
         port_addr += GPIO_PORT_Q_OFFSET;
     }

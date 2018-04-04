@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2015 HAW Hamburg
- *               2016 Freie Universität Berlin
- *               2016 INRIA
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -9,15 +7,17 @@
  */
 
 /**
- * @ingroup         xmega_common
+ * @ingroup     cpu_atxmega_common
  * @{
  *
  * @file
- * @brief           CPU specific definitions for internal peripheral handling
+ * @brief       CPU specific definitions for internal peripheral handling for
+ *              the atxmega family
  *
- * @author          Josua Arndt
+ * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
+ *
+ * @}
  */
-
 #ifndef PERIPH_CPU_H
 #define PERIPH_CPU_H
 
@@ -59,10 +59,10 @@ enum
     PORT_D = 3,  /**< port D */
     PORT_E = 4,  /**< port E */
     PORT_F = 5,  /**< port F */
-/*    PORT_H = 6  /**< port H */
-/*    PORT_J = 7,  /**< port J */
-/*    PORT_K = 8,  /**< port K */
-/*    PORT_Q = 9,  /**< port Q */
+//    PORT_H = 6  /**< port H */
+//    PORT_J = 7,  /**< port J */
+//    PORT_K = 8,  /**< port K */
+//    PORT_Q = 9,  /**< port Q */
     PORT_R = 10, /**< port R */
 };
 

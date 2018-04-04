@@ -16,13 +16,8 @@
  * @author      Josua Arndt <jarnd@ias.rwth-aachen.de>
  *
  *
- * Support static BAUD rate calculation using UART_STDIO_BAUDRATE.
- * Set UART_STDIO_BAUDRATE to the desired baud rate and pass it as a -D argument
- * at compliation time (e.g. in the boards Makefile.include file).
- * UART_BAUD_TOL can be set to guarantee a BAUD rate tolerance at compile time or
- * to switch to double speed transmission (U2X) to achieve a lower tolerance.
- * At runtime, this tolerance is not guaranteed to be met.
- * However, an error message will be displayed at compile time.
+ * Supports runtime calculation of the BSEL and BSCALE register values.
+ * Supports reconfiguring UART after a clock change.
  *
  * @}
  */
@@ -38,7 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
+#include "board.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -107,8 +102,6 @@ int8_t _check_bsel(uint32_t *baud, uint32_t *calcbaud, int16_t *precision )
     }
 
     if (pre < ((uint16_t)*precision)) {
-//        DEBUG("baud %" PRIu32 " calcbaud %" PRIu32 " \n", *baud, *calcbaud);
-//        DEBUG("Absolute deviation in percent %" PRIu32 " \n", pre);
         *precision = pre;
         return 1;
     }
@@ -119,7 +112,6 @@ int8_t _check_bsel(uint32_t *baud, uint32_t *calcbaud, int16_t *precision )
 int16_t _xmega_bsel_bscale(uint32_t *fper, uint32_t *baud, uint8_t clk2x,
                            uint16_t *bsel, int8_t *bscale )
 {
-
     uint32_t calcbaud = 0;
     int16_t precision = UINT_MAX;
 
@@ -200,7 +192,8 @@ int16_t _xmega_bsel_bscale(uint32_t *fper, uint32_t *baud, uint8_t clk2x,
         locBsel = (uint16_t)(num & 0xFFF);
 
         /* Omit division by 16 get higher accuracy at small baudrates*/
-        calcbaud = ((*fper) << (-locBscale)) / ((locBsel + (1 << (-locBscale))) << (4 - clk2x));
+        calcbaud = ((*fper) << (-locBscale)) /
+                   ((locBsel + (1 << (-locBscale))) << (4 - clk2x));
 
         if (_check_bsel( baud, &calcbaud, &precision)) {
             *bsel = locBsel;
@@ -261,13 +254,15 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg)
     dev[uart]->CTRLC = 0;
 
     /* configure UART to 8N1 mode */
-    dev[uart]->CTRLC = USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc | USART_CHSIZE_8BIT_gc;
+    dev[uart]->CTRLC = USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc
+                       | USART_CHSIZE_8BIT_gc;
 
     /* set clock divider */
     xmega_calculate_bsel_bscale(CLOCK_CORECLOCK, baudrate, &clk2x, &bsel, &bscale);
 
     dev[uart]->BAUDCTRLA = (uint8_t)(bsel & 0x00ff);
-    dev[uart]->BAUDCTRLB = (bscale << USART_BSCALE_gp) | ((uint8_t)((bsel & 0x0fff) >> 8));
+    dev[uart]->BAUDCTRLB = (bscale << USART_BSCALE_gp)
+                           | ((uint8_t)((bsel & 0x0fff) >> 8));
     if (clk2x == 1) {
         dev[uart]->CTRLB |= USART_CLK2X_bm;
     }
@@ -289,7 +284,8 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg)
     sei();
 
     _delay_ms(100);
-    DEBUG("Set clk2x %" PRIu8 " bsel %" PRIu16 "bscale %" PRIi8 "\n", clk2x, bsel, bscale);
+    DEBUG("Set clk2x %" PRIu8 " bsel %" PRIu16 "bscale %" PRIi8 "\n",
+          clk2x, bsel, bscale);
     return UART_OK;
 }
 
