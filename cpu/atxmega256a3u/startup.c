@@ -14,7 +14,7 @@
  * @brief       Startup code and interrupt vector definition
  *
  * @author     Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
- * @author      Josua Arndt <jarndt@ias.rwth-aachen.de>
+ * @author     Josua Arndt <jarndt@ias.rwth-aachen.de>
  * @}
  */
 
@@ -46,14 +46,14 @@ void init7_ovr(void) __attribute__((section(".init7")));
 void init8_ovr(void) __attribute__((section(".init8")));
 
 
-__attribute__((used,naked)) void init7_ovr(void)
+__attribute__((used, naked)) void init7_ovr(void)
 {
-    __asm__("call reset_handler");
+    __asm__ ("call reset_handler");
 }
 
-__attribute__((used,naked)) void init8_ovr(void)
+__attribute__((used, naked)) void init8_ovr(void)
 {
-    __asm__("jmp exit");
+    __asm__ ("jmp exit");
 }
 
 /**

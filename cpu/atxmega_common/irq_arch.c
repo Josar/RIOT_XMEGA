@@ -35,24 +35,25 @@ volatile uint8_t __in_isr = 0;
 __attribute__((always_inline)) static inline uint8_t  __get_interrupt_state(void)
 {
     uint8_t sreg;
-    __asm__ volatile("in r0, __SREG__; \n\t"
-                 "mov %0, r0       \n\t"
-                 : "=g"(sreg)
-                 :
-                 : "r0");
+
+    __asm__ volatile ("in r0, __SREG__; \n\t"
+                      "mov %0, r0       \n\t"
+                      : "=g" (sreg)
+                      :
+                      : "r0");
     return sreg & (1 << 7);
 }
 
 __attribute__((always_inline)) inline void __set_interrupt_state(uint8_t state)
 {
-    __asm__ volatile("mov r15,%0;       \n\t"
-                 "in r16, __SREG__; \n\t"
-                 "cbr r16,7;        \n\t"
-                 "or r15,r16;       \n\t"
-                 "out __SREG__, r15 \n\t"
-                 :
-                 : "g"(state)
-                 : "r15", "r16");
+    __asm__ volatile ("mov r15,%0;       \n\t"
+                      "in r16, __SREG__; \n\t"
+                      "cbr r16,7;        \n\t"
+                      "or r15,r16;       \n\t"
+                      "out __SREG__, r15 \n\t"
+                      :
+                      : "g" (state)
+                      : "r15", "r16");
 }
 
 /**
@@ -61,6 +62,7 @@ __attribute__((always_inline)) inline void __set_interrupt_state(uint8_t state)
 unsigned int irq_disable(void)
 {
     uint8_t mask = __get_interrupt_state();
+
     cli();
     return (unsigned int) mask;
 }
@@ -70,7 +72,7 @@ unsigned int irq_disable(void)
  */
 unsigned int irq_enable(void)
 {
-	sei();
+    sei();
     return __get_interrupt_state();
 }
 

@@ -35,7 +35,7 @@ extern "C" {
  * The Pin mode is determined by bit 3-5 (OPC) of the PINnCTRL Register
  * and the Data Direction register (DIR)
  */
-#define PIN_MODE_SEL(DIR , OPC )          ( DIR <<4| OPC )
+#define PIN_MODE_SEL(DIR, OPC )          (DIR << 4 | OPC)
 /**
  * @brief   Available pin modes
  *
@@ -46,21 +46,21 @@ extern "C" {
  */
 #define HAVE_GPIO_MODE_T
 typedef enum GPIO_MODE {
-    GPIO_IN = PIN_MODE_SEL(0 , 0),               /**< configure as input without pull resistor (TOTEM)*/
-    GPIO_IN_BSKPR = PIN_MODE_SEL(0 , 1),             /**< configure as input with push-pull mode (BUSKEEPER) */
-    GPIO_IN_PD = PIN_MODE_SEL(0 , 2),             /**< configure as input with pull-down resistor */
-    GPIO_IN_PU = PIN_MODE_SEL(0 , 3),             /**< configure as input with pull-up resistor */
+    GPIO_IN                 = PIN_MODE_SEL(0, 0),   /**< configure as input without pull resistor (TOTEM)*/
+    GPIO_IN_BSKPR           = PIN_MODE_SEL(0, 1),   /**< configure as input with push-pull mode (BUSKEEPER) */
+    GPIO_IN_PD              = PIN_MODE_SEL(0, 2),   /**< configure as input with pull-down resistor */
+    GPIO_IN_PU              = PIN_MODE_SEL(0, 3),   /**< configure as input with pull-up resistor */
 
-    GPIO_IN_WRD_OR = PIN_MODE_SEL(0 , 4),             /**< configure as input with wired OR  */
-    GPIO_IN_WRD_AND = PIN_MODE_SEL(0 , 5),             /**< configure as input with wired AND */
-    GPIO_IN_WRD_OR_PULL = PIN_MODE_SEL(0 , 6),             /**< configure as input with with wired OR and pull-down resistor */
-    GPIO_IN_WRD_AND_PULL = PIN_MODE_SEL(0 , 7),             /**< configure as input with with wired AND and pull-up resistor */
+    GPIO_IN_WRD_OR          = PIN_MODE_SEL(0, 4),   /**< configure as input with wired OR  */
+    GPIO_IN_WRD_AND         = PIN_MODE_SEL(0, 5),   /**< configure as input with wired AND */
+    GPIO_IN_WRD_OR_PULL     = PIN_MODE_SEL(0, 6),   /**< configure as input with with wired OR and pull-down resistor */
+    GPIO_IN_WRD_AND_PULL    = PIN_MODE_SEL(0, 7),   /**< configure as input with with wired AND and pull-up resistor */
 
-    GPIO_OUT  = PIN_MODE_SEL(1 , 1),               /**< configure as output with push-pull mode (BUSKEEPER) */
-    GPIO_OUT_PD = PIN_MODE_SEL(1 , 2),                /**< configure as output with push-pull mode and Pull-Down */
-    GPIO_OUT_PU = PIN_MODE_SEL(1 , 3),              /**< configure as output with push-pull mode and Pull-Up */
-    GPIO_OUT_WRD_OR_PULL = PIN_MODE_SEL(1 , 6),             /**< configure as output with with wired OR and pull-down resistor */
-    GPIO_OUT_WRD_AND_PULL = PIN_MODE_SEL(1 , 7),             /**< configure as output with with wired AND and pull-up resistor */
+    GPIO_OUT                = PIN_MODE_SEL(1, 1),   /**< configure as output with push-pull mode (BUSKEEPER) */
+    GPIO_OUT_PD             = PIN_MODE_SEL(1, 2),   /**< configure as output with push-pull mode and Pull-Down */
+    GPIO_OUT_PU             = PIN_MODE_SEL(1, 3),   /**< configure as output with push-pull mode and Pull-Up */
+    GPIO_OUT_WRD_OR_PULL    = PIN_MODE_SEL(1, 6),   /**< configure as output with with wired OR and pull-down resistor */
+    GPIO_OUT_WRD_AND_PULL   = PIN_MODE_SEL(1, 7),   /**< configure as output with with wired AND and pull-up resistor */
 } gpio_mode_t;
 
 /**
@@ -68,13 +68,12 @@ typedef enum GPIO_MODE {
  */
 #define HAVE_GPIO_FLANK_T
 typedef enum {
-    GPIO_BOTH = 0,           /**< emit interrupt on both flanks */
-    GPIO_RISING = 1,        /**< emit interrupt on rising flank */
-    GPIO_FALLING = 2,       /**< emit interrupt on falling flank */
-    GPIO_LOW_LEVEL= 3,        /**< emit interrupt on low level */
-    GPIO_IN_DISS= 7,        /**< PORTA - PORTF buffer disable for better performance with analog functionality*/
+    GPIO_BOTH       = 0,    /**< emit interrupt on both flanks */
+    GPIO_RISING     = 1,    /**< emit interrupt on rising flank */
+    GPIO_FALLING    = 2,    /**< emit interrupt on falling flank */
+    GPIO_LOW_LEVEL  = 3,    /**< emit interrupt on low level */
+    GPIO_IN_DISS    = 7,    /**< PORTA - PORTF buffer disable for better performance with analog functionality*/
 } gpio_flank_t;
-
 
 /**
  * @name    Power management configuration
@@ -139,10 +138,10 @@ typedef enum {
  */
 #define HAVE_SPI_MODE_T
 typedef enum {
-    SPI_MODE_0 = SPI_MODE_SEL(0, 0),    /**< mode 0 */
-    SPI_MODE_1 = SPI_MODE_SEL(0, 1),    /**< mode 1 */
-    SPI_MODE_2 = SPI_MODE_SEL(1, 0),    /**< mode 2 */
-    SPI_MODE_3 = SPI_MODE_SEL(1, 1)     /**< mode 3 */
+    SPI_MODE_0  = SPI_MODE_SEL(0, 0),   /**< mode 0 */
+    SPI_MODE_1  = SPI_MODE_SEL(0, 1),   /**< mode 1 */
+    SPI_MODE_2  = SPI_MODE_SEL(1, 0),   /**< mode 2 */
+    SPI_MODE_3  = SPI_MODE_SEL(1, 1)    /**< mode 3 */
 } spi_mode_t;
 /** @} */
 
@@ -161,14 +160,14 @@ typedef enum {
  */
 #define HAVE_SPI_CLK_T
 typedef enum {
-    SPI_CLK_250KHZ = SPI_CLK_SEL(0, 0, 0),      /**< 32/128 -> 250KHz */
-    SPI_CLK_500KHZ = SPI_CLK_SEL(0, 0, 1),      /**< 32/64  -> 500kHz */
-    SPI_CLK_2MHZ   = SPI_CLK_SEL(0, 1, 0),      /**< 32/16  -> 2MHz */
-    SPI_CLK_8MHZ   = SPI_CLK_SEL(0, 1, 1),      /**< 32/4   -> 8MHz */
-    SPI_CLK_16MHZ  = SPI_CLK_SEL(1, 0, 0),      /**< 32/2   -> 16MHz */
-    SPI_CLK_4MHZ  = SPI_CLK_SEL(1, 0, 0),      /**< 32/8   -> 4MHz */
-    SPI_CLK_1MHZ  = SPI_CLK_SEL(1, 0, 0),      /**< 32/32   -> 1MHz */
-    SPI_CLK_500MHZ_CLK2X  = SPI_CLK_SEL(1, 0, 0) /**< 32/64   -> 500kHz */
+    SPI_CLK_250KHZ          = SPI_CLK_SEL(0, 0, 0), /**< 32/128 -> 250KHz */
+    SPI_CLK_500KHZ          = SPI_CLK_SEL(0, 0, 1), /**< 32/64  -> 500kHz */
+    SPI_CLK_2MHZ            = SPI_CLK_SEL(0, 1, 0), /**< 32/16  -> 2MHz */
+    SPI_CLK_8MHZ            = SPI_CLK_SEL(0, 1, 1), /**< 32/4   -> 8MHz */
+    SPI_CLK_16MHZ           = SPI_CLK_SEL(1, 0, 0), /**< 32/2   -> 16MHz */
+    SPI_CLK_4MHZ            = SPI_CLK_SEL(1, 0, 0), /**< 32/8   -> 4MHz */
+    SPI_CLK_1MHZ            = SPI_CLK_SEL(1, 0, 0), /**< 32/32   -> 1MHz */
+    SPI_CLK_500MHZ_CLK2X    = SPI_CLK_SEL(1, 0, 0)  /**< 32/64   -> 500kHz */
 } spi_clk_t;
 /** @} */
 

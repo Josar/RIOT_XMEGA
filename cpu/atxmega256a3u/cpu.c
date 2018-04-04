@@ -35,8 +35,8 @@
  */
 void cpu_init(void)
 {
-	wdt_reset();
-	wdt_disable();
+    wdt_reset();
+    wdt_disable();
 
     /* trigger static peripheral initialization */
     periph_init();
@@ -54,20 +54,18 @@ void cpu_init(void)
 // EIFR – External Interrupt Flag Register
 // PCIFR – Pin Change Interrupt Flag Register
 
-ISR(BADISR_vect)
-{
-	while(1){
+ISR(BADISR_vect){
+    while (1) {
 
-		if( (PORTF.IN & PIN3_bm)!=0 ){
-			  PORTF.OUTSET = PIN2_bm ;
+        if ((PORTF.IN & PIN3_bm) != 0) {
+            PORTF.OUTSET = PIN2_bm;
+            PORTF.OUTCLR = PIN3_bm;
+        }
+        else {
+            PORTF.OUTCLR = PIN2_bm;
+            PORTF.OUTSET = PIN3_bm;
+        }
 
-			  PORTF.OUTCLR = PIN3_bm ;
-		 }else
-		 {
-			 PORTF.OUTCLR = PIN2_bm ;
-			 PORTF.OUTSET = PIN3_bm ;
-		 }
-
-		 _delay_ms( 50 );
-	};
+        _delay_ms( 50 );
+    }
 }

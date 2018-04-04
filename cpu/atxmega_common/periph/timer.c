@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Freie Universität Berlin, Hinnerk van Bruinehsen
+ * Copyright (C) 2018 Josua Arndt
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -13,8 +13,7 @@
  * @file
  * @brief       Low-level timer driver implementation for the ATmega family
  *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
- * @author      Hinnerk van Bruinehsen <h.v.bruinehsen@fu-berlin.de>
+ * @author      Jousa Arndt <jarndt@ias.rwth-aachen.de>
  *
  * @}
  */
@@ -26,8 +25,8 @@
 
 #include "periph/timer.h"
 
-#include "../../../boards/jiminy-xmega256-at86rf233/include/board.h"
-#include "../../../boards/jiminy-xmega256-at86rf233/include/periph_conf.h"
+#include "include/board.h"
+#include "include/periph_conf.h"
 
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
@@ -52,11 +51,11 @@ static const uint8_t prescalers[] = { 0, 1, 2, 3, 6, 8, 10 };
  * @brief   Timer state context
  */
 typedef struct {
-	TC1_t *dev;          /**< timer device */
-    timer_cb_t cb;              /**< interrupt callback */
-    void *arg;                  /**< interrupt callback argument */
-    uint8_t mode;               /**< remember the configured mode */
-    uint8_t isrs;               /**< remember the interrupt state */
+    TC1_t *dev;             /**< timer device */
+    timer_cb_t cb;          /**< interrupt callback */
+    void *arg;              /**< interrupt callback argument */
+    uint8_t mode;           /**< remember the configured mode */
+    uint8_t isrs;           /**< remember the interrupt state */
 } ctx_t;
 
 
@@ -84,7 +83,7 @@ static ctx_t ctx[] = {
 };
 #else
 /* fallback if no timer is configured */
-static ctx_t *ctx[] = {{ NULL }};
+static ctx_t *ctx[] = { { NULL } };
 #endif
 /** @} */
 
@@ -94,7 +93,6 @@ static ctx_t *ctx[] = {{ NULL }};
 int timer_init(tim_t tim, unsigned long freq, timer_cb_t cb, void *arg)
 {
     DEBUG("timer.c: freq = %ld, Core Clock = %ld\n", freq, CLOCK_CORECLOCK);
-
 
     uint8_t pre = 0;
 
@@ -115,15 +113,13 @@ int timer_init(tim_t tim, unsigned long freq, timer_cb_t cb, void *arg)
     }
 
     /* stop and reset timer */
-    ctx[tim].dev->CTRLA = 0; // Stop
-    ctx[tim].dev->CTRLFSET = TC_CMD_RESET_gc ; // Force Reset
+    ctx[tim].dev->CTRLA = 0;                    // Stop
+    ctx[tim].dev->CTRLFSET = TC_CMD_RESET_gc;   // Force Reset
 
     /* save interrupt context and timer Prescaler */
-    ctx[tim].cb   = cb;
-    ctx[tim].arg  = arg;
-    ctx[tim].mode  = ( 0x0F & (pre+1) ) ;
-
-
+    ctx[tim].cb = cb;
+    ctx[tim].arg = arg;
+    ctx[tim].mode = (0x0F & (pre + 1));
 
     /* enable timer with calculated prescaler */
     ctx[tim].dev->CTRLA = ctx[tim].mode;
@@ -134,8 +130,8 @@ int timer_init(tim_t tim, unsigned long freq, timer_cb_t cb, void *arg)
 
 int timer_set(tim_t tim, int channel, unsigned int timeout)
 {
-	DEBUG("timer_set channel %d to %u\n", channel, timeout );
-	return timer_set_absolute(tim, channel, timer_read(tim) + timeout);
+    DEBUG("timer_set channel %d to %u\n", channel, timeout );
+    return timer_set_absolute(tim, channel, timer_read(tim) + timeout);
 }
 
 int timer_set_absolute(tim_t tim, int channel, unsigned int value)
@@ -152,10 +148,10 @@ int timer_set_absolute(tim_t tim, int channel, unsigned int value)
     ctx[tim].dev->INTFLAGS &= ~(1 << (channel + TC0_CCAIF_bp));
 
     // set value to compare
-    *(((uint16_t*)(&ctx[tim].dev->CCA))+channel)= (uint16_t)value;
+    *(((uint16_t *)(&ctx[tim].dev->CCA)) + channel) = (uint16_t)value;
 
     /* Compare or Capture Interrupt  Medium Level */
-    ctx[tim].dev->INTCTRLB |= ( TC_CCAINTLVL_HI_gc << channel );
+    ctx[tim].dev->INTCTRLB |= (TC_CCAINTLVL_HI_gc << channel);
 
     /* Enable PMIC interrupt level medium. */
     PMIC.CTRL |= PMIC_HILVLEN_bm;
@@ -179,26 +175,26 @@ int timer_clear(tim_t tim, int channel)
 
     // Clear Interrupt Flag
     // ctx[tim].dev->INTFLAGS &= ~(1 << (channel + TC0_CCAIF_bp));
-  //The CCxIF is automatically cleared when the corresponding interrupt vector is executed.
+    //The CCxIF is automatically cleared when the corresponding interrupt vector is executed.
 
     return 0;
 }
 
 unsigned int timer_read(tim_t tim)
 {
-	DEBUG("timer_read");
-	return (unsigned int)ctx[tim].dev->CNT;
+    DEBUG("timer_read");
+    return (unsigned int)ctx[tim].dev->CNT;
 }
 
 void timer_stop(tim_t tim)
 {
-	DEBUG("timer_stop");
+    DEBUG("timer_stop");
     ctx[tim].dev->CTRLA = 0;
 }
 
 void timer_start(tim_t tim)
 {
-	DEBUG("timer_start");
+    DEBUG("timer_start");
     ctx[tim].dev->CTRLA = ctx[tim].mode;
 }
 
@@ -225,19 +221,16 @@ static inline void _isr(tim_t tim, int channel)
 #endif
 
 #ifdef TIMER_0
-ISR(TIMER_0_ISRA, ISR_BLOCK)
-{
+ISR(TIMER_0_ISRA, ISR_BLOCK){
     _isr(0, 0);
 }
 
-ISR(TIMER_0_ISRB, ISR_BLOCK)
-{
+ISR(TIMER_0_ISRB, ISR_BLOCK){
     _isr(0, 1);
 }
-ISR(TIMER_0_OVF, ISR_BLOCK)
-{
+ISR(TIMER_0_OVF, ISR_BLOCK){
 
-	// _isr(0, 2);
+    // _isr(0, 2);
 }
 #endif /* TIMER_0 */
 

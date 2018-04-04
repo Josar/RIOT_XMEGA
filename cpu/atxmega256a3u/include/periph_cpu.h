@@ -32,7 +32,7 @@ extern "C" {
  * @name   Length of the CPU_ID in octets
  * @{
  */
-#define CPUID_LEN           (8U)
+#define CPUID_LEN (8U)
 /** @} */
 
 typedef unsigned int gpio_t;
@@ -40,34 +40,31 @@ typedef unsigned int gpio_t;
 /**
  * @brief   GPIO pin not defined
  */
-#define GPIO_UNDEF          (0xFFFF)
+#define GPIO_UNDEF (0xFFFF)
 #endif
-
 
 /**
  * @brief   Define a CPU specific GPIO pin generator macro
  */
-#define GPIO_PIN(x, y)          ((x << 4) | y)
+#define GPIO_PIN(x, y) ((x << 4) | y)
 
 /**
  * @brief   Available ports on the ATxmega256a3u family
  */
-enum {
-    PORT_A = 0,       /**< port A */
-    PORT_B = 1,       /**< port B */
-    PORT_C = 2,       /**< port C */
-    PORT_D = 3,       /**< port D */
-    PORT_E = 4,       /**< port E */
-    PORT_F = 5,       /**< port F */
-//    PORT_H = 6,       /**< port H */
-//    PORT_J = 7,       /**< port J */
-//    PORT_K = 8,       /**< port K */
-//    PORT_Q = 9,       /**< port Q */
-    PORT_R = 10,       /**< port R */
+enum
+{
+    PORT_A = 0,  /**< port A */
+    PORT_B = 1,  /**< port B */
+    PORT_C = 2,  /**< port C */
+    PORT_D = 3,  /**< port D */
+    PORT_E = 4,  /**< port E */
+    PORT_F = 5,  /**< port F */
+/*    PORT_H = 6  /**< port H */
+/*    PORT_J = 7,  /**< port J */
+/*    PORT_K = 8,  /**< port K */
+/*    PORT_Q = 9,  /**< port Q */
+    PORT_R = 10, /**< port R */
 };
-
-
-
 
 #ifdef __cplusplus
 }
